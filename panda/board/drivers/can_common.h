@@ -207,6 +207,12 @@ void ignition_can_hook(CANPacket_t *to_push) {
       ignition_can = (GET_BYTE(to_push, 0) & 0x1U) != 0U;
     }
 
+    // Model3 exception
+    if ((addr == 0x242) && (len == 2)) {
+      // vehiclePowerStateDBG
+      ignition_can = (GET_BYTE(to_push, 1)) == 0x3U;
+    }
+
     // Mazda exception
     if ((addr == 0x9E) && (len == 8)) {
       ignition_can = (GET_BYTE(to_push, 0) >> 5) == 0x6U;
