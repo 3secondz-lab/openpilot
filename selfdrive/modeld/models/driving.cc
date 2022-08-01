@@ -211,26 +211,34 @@ void fill_plan(cereal::ModelDataV2::Builder &framed, const ModelOutputPlanPredic
 
 void fill_lane_lines(cereal::ModelDataV2::Builder &framed, const std::array<float, TRAJECTORY_SIZE> &plan_t,
                      const ModelOutputLaneLines &lanes) {
-  std::array<float, TRAJECTORY_SIZE> left_far_y, left_far_z;
-  std::array<float, TRAJECTORY_SIZE> left_near_y, left_near_z;
-  std::array<float, TRAJECTORY_SIZE> right_near_y, right_near_z;
-  std::array<float, TRAJECTORY_SIZE> right_far_y, right_far_z;
+  std::array<float, TRAJECTORY_SIZE> left_far_y, left_far_z, left_far_std_y, left_far_std_z;
+  std::array<float, TRAJECTORY_SIZE> left_near_y, left_near_z, left_near_std_y, left_near_std_z;
+  std::array<float, TRAJECTORY_SIZE> right_near_y, right_near_z, right_far_std_y, right_far_std_z;
+  std::array<float, TRAJECTORY_SIZE> right_far_y, right_far_z, right_near_std_y, right_near_std_z;
   for (int j=0; j<TRAJECTORY_SIZE; j++) {
     left_far_y[j] = lanes.mean.left_far[j].y;
     left_far_z[j] = lanes.mean.left_far[j].z;
+    exp(left_far_std_y[j] = lanes.std.left_far[j].y);
+    exp(left_far_std_z[j] = lanes.std.left_far[j].z);
     left_near_y[j] = lanes.mean.left_near[j].y;
     left_near_z[j] = lanes.mean.left_near[j].z;
+    exp(left_near_std_y[j] = lanes.std.left_near[j].y);
+    exp(left_near_std_z[j] = lanes.std.left_near[j].z);
     right_near_y[j] = lanes.mean.right_near[j].y;
     right_near_z[j] = lanes.mean.right_near[j].z;
+    exp(right_near_std_y[j] = lanes.std.right_near[j].y);
+    exp(right_near_std_z[j] = lanes.std.right_near[j].z);
     right_far_y[j] = lanes.mean.right_far[j].y;
     right_far_z[j] = lanes.mean.right_far[j].z;
+    exp(right_far_std_y[j] = lanes.std.right_far[j].y);
+    exp(right_far_z[j] = lanes.std.right_far[j].z);
   }
 
   auto lane_lines = framed.initLaneLines(4);
-  fill_xyzt(lane_lines[0], plan_t, X_IDXS_FLOAT, left_far_y, left_far_z);
-  fill_xyzt(lane_lines[1], plan_t, X_IDXS_FLOAT, left_near_y, left_near_z);
-  fill_xyzt(lane_lines[2], plan_t, X_IDXS_FLOAT, right_near_y, right_near_z);
-  fill_xyzt(lane_lines[3], plan_t, X_IDXS_FLOAT, right_far_y, right_far_z);
+  fill_xyzt(lane_lines[0], plan_t, X_IDXS_FLOAT, left_far_y, left_far_z, X_IDXS_FLOAT, left_far_std_y, left_far_std_z);
+  fill_xyzt(lane_lines[1], plan_t, X_IDXS_FLOAT, left_near_y, left_near_z, X_IDXS_FLOAT, left_near_std_y, left_near_std_z);
+  fill_xyzt(lane_lines[2], plan_t, X_IDXS_FLOAT, right_near_y, right_near_z, X_IDXS_FLOAT, right_near_std_y, right_near_std_z);
+  fill_xyzt(lane_lines[3], plan_t, X_IDXS_FLOAT, right_far_y, right_far_z, X_IDXS_FLOAT, right_far_std_y, right_far_std_z);
 
   framed.setLaneLineStds({
     exp(lanes.std.left_far[0].y),
@@ -249,18 +257,23 @@ void fill_lane_lines(cereal::ModelDataV2::Builder &framed, const std::array<floa
 
 void fill_road_edges(cereal::ModelDataV2::Builder &framed, const std::array<float, TRAJECTORY_SIZE> &plan_t,
                      const ModelOutputRoadEdges &edges) {
-  std::array<float, TRAJECTORY_SIZE> left_y, left_z;
-  std::array<float, TRAJECTORY_SIZE> right_y, right_z;
+  std::array<float, TRAJECTORY_SIZE> left_y, left_z, left_std_y, left_std_z;
+  std::array<float, TRAJECTORY_SIZE> right_y, right_z, right_std_y, right_std_z;
   for (int j=0; j<TRAJECTORY_SIZE; j++) {
     left_y[j] = edges.mean.left[j].y;
     left_z[j] = edges.mean.left[j].z;
+    left_std_y[j] = edges.std.left[j].y;
+    left_std_z[j] = edges.std.left[j].z;
+    
     right_y[j] = edges.mean.right[j].y;
     right_z[j] = edges.mean.right[j].z;
+    right_std_y[j] = edges.std.right[j].y;
+    right_std_z[j] = edges.std.right[j].z;
   }
 
   auto road_edges = framed.initRoadEdges(2);
-  fill_xyzt(road_edges[0], plan_t, X_IDXS_FLOAT, left_y, left_z);
-  fill_xyzt(road_edges[1], plan_t, X_IDXS_FLOAT, right_y, right_z);
+  fill_xyzt(road_edges[0], plan_t, X_IDXS_FLOAT, left_y, left_z, X_IDXS_FLOAT, left_std_y, left_std_z);
+  fill_xyzt(road_edges[1], plan_t, X_IDXS_FLOAT, right_y, right_z, X_IDXS_FLOAT, right_std_y, right_std_z);
 
   framed.setRoadEdgeStds({
     exp(edges.std.left[0].y),
