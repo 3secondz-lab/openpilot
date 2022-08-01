@@ -218,20 +218,20 @@ void fill_lane_lines(cereal::ModelDataV2::Builder &framed, const std::array<floa
   for (int j=0; j<TRAJECTORY_SIZE; j++) {
     left_far_y[j] = lanes.mean.left_far[j].y;
     left_far_z[j] = lanes.mean.left_far[j].z;
-    exp(left_far_std_y[j] = lanes.std.left_far[j].y);
-    exp(left_far_std_z[j] = lanes.std.left_far[j].z);
+    left_far_std_y[j] = exp(lanes.std.left_far[j].y);
+    left_far_std_z[j] = exp(lanes.std.left_far[j].z);
     left_near_y[j] = lanes.mean.left_near[j].y;
     left_near_z[j] = lanes.mean.left_near[j].z;
-    exp(left_near_std_y[j] = lanes.std.left_near[j].y);
-    exp(left_near_std_z[j] = lanes.std.left_near[j].z);
+    left_near_std_y[j] = exp(lanes.std.left_near[j].y);
+    left_near_std_z[j] = exp(lanes.std.left_near[j].z);
     right_near_y[j] = lanes.mean.right_near[j].y;
     right_near_z[j] = lanes.mean.right_near[j].z;
-    exp(right_near_std_y[j] = lanes.std.right_near[j].y);
-    exp(right_near_std_z[j] = lanes.std.right_near[j].z);
+    right_near_std_y[j] = exp(lanes.std.right_near[j].y);
+    right_near_std_z[j] = exp(lanes.std.right_near[j].z);
     right_far_y[j] = lanes.mean.right_far[j].y;
     right_far_z[j] = lanes.mean.right_far[j].z;
-    exp(right_far_std_y[j] = lanes.std.right_far[j].y);
-    exp(right_far_z[j] = lanes.std.right_far[j].z);
+    right_far_std_y[j] = exp(lanes.std.right_far[j].y);
+    right_far_std_z[j] = exp(lanes.std.right_far[j].z);
   }
 
   auto lane_lines = framed.initLaneLines(4);
