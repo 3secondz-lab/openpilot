@@ -12,6 +12,7 @@ const float TESLA_MIN_ACCEL = -3.5; // m/s^2
 
 const int TESLA_FLAG_POWERTRAIN = 1;
 const int TESLA_FLAG_LONGITUDINAL_CONTROL = 2;
+const int TESLA_FLAG_MODEL3 = 3;
 
 const CanMsg TESLA_TX_MSGS[] = {
   {0x488, 0, 4},  // DAS_steeringControl
@@ -109,6 +110,27 @@ static int tesla_rx_hook(CANPacket_t *to_push) {
       // 0x488: DAS_steeringControl should not be received on bus 0
       generic_rx_checks((addr == 0x488) && (bus == 0));
     }
+  }
+
+  if (tesla_model3) {
+    // MODEL3: No valid check, just receive all can msgs
+    valid = true;
+
+    if(addr == 0x257) {
+      vehicle_speed = (((((GET_BYTE(to_push,2)) << 8) | ((GEt_BYTE(to_push,1) & 0xF0U))) * 0.08) - 40);
+      vehicle_moving = ABS(vehicle_speed) > 0.1;
+    }
+    if(addr == 0x118) {
+      gas_pressed = (GET_BYTE(to_push,4) != 0U);
+      brake_pressed = ((GET_BYTE(to_push, 2) & 0x18U) == 1U);
+    }
+    if(cruise_engaged && !cruise_engaged_prev) {
+          controls_allowed = 1;
+        }
+        if(!cruise_engaged) {
+          controls_allowed = 0;
+        }
+    cruise_engaged_prev = cruise_engaged;
   }
 
   return valid;
@@ -236,6 +258,7 @@ static int tesla_fwd_hook(int bus_num, CANPacket_t *to_fwd) {
 }
 
 static const addr_checks* tesla_init(int16_t param) {
+  tesla_model3 = GET_FLAG(param, TESLA_FLAG_MODEL3);
   tesla_powertrain = GET_FLAG(param, TESLA_FLAG_POWERTRAIN);
   tesla_longitudinal = GET_FLAG(param, TESLA_FLAG_LONGITUDINAL_CONTROL);
   controls_allowed = 0;

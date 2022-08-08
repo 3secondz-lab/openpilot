@@ -36,6 +36,9 @@ class CarInterface(CarInterfaceBase):
         get_safety_config(car.CarParams.SafetyModel.tesla, Panda.FLAG_TESLA_LONG_CONTROL),
         get_safety_config(car.CarParams.SafetyModel.tesla, Panda.FLAG_TESLA_LONG_CONTROL | Panda.FLAG_TESLA_POWERTRAIN),
       ]
+    elif (candidate in (CAR.MODEL3_MY22)):
+      ret.openpilotLongitudinalControl = False
+      ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.tesla, Panda.FLAG_TESLA_MODEL3),]
     else:
       ret.openpilotLongitudinalControl = False
       ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.tesla, 0)]
@@ -48,6 +51,11 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 2100. + STD_CARGO_KG
       ret.wheelbase = 2.959
       ret.centerToFront = ret.wheelbase * 0.5
+      ret.steerRatio = 13.5
+    elif candidate in (CAR.MODEL3_MY22):
+      ret.mass = 2000. + STD_CARGO_KG
+      ret.wheelbase = 2.875
+      ret.centerToFront = ret.wheelbase * 0.50
       ret.steerRatio = 13.5
     else:
       raise ValueError(f"Unsupported car: {candidate}")
