@@ -49,7 +49,7 @@ addr_checks tesla_pt_rx_checks = {tesla_pt_addr_checks, TESLA_PT_ADDR_CHECK_LEN}
 
 bool tesla_longitudinal = false;
 bool tesla_powertrain = false;  // Are we the second panda intercepting the powertrain bus?
-
+bool tesla_model3 = false;
 static int tesla_rx_hook(CANPacket_t *to_push) {
   bool valid = addr_safety_check(to_push, tesla_powertrain ? (&tesla_pt_rx_checks) : (&tesla_rx_checks),
                                  NULL, NULL, NULL);
@@ -114,23 +114,19 @@ static int tesla_rx_hook(CANPacket_t *to_push) {
 
   if (tesla_model3) {
     // MODEL3: No valid check, just receive all can msgs
+    int bus = GET_BUS(to_push);
+    int addr = GET_ADDR(to_push);
+
     valid = true;
 
     if(addr == 0x257) {
-      vehicle_speed = (((((GET_BYTE(to_push,2)) << 8) | ((GEt_BYTE(to_push,1) & 0xF0U))) * 0.08) - 40);
+      vehicle_speed = (((((GET_BYTE(to_push,2)) << 8) | ((GET_BYTE(to_push,1) & 0xF0U))) * 0.08) - 40);
       vehicle_moving = ABS(vehicle_speed) > 0.1;
     }
     if(addr == 0x118) {
       gas_pressed = (GET_BYTE(to_push,4) != 0U);
-      brake_pressed = ((GET_BYTE(to_push, 2) & 0x18U) == 1U);
+      brake_pressed = (((GET_BYTE(to_push, 2) & 0x18U) >> 3)== 1U);
     }
-    if(cruise_engaged && !cruise_engaged_prev) {
-          controls_allowed = 1;
-        }
-        if(!cruise_engaged) {
-          controls_allowed = 0;
-        }
-    cruise_engaged_prev = cruise_engaged;
   }
 
   return valid;
