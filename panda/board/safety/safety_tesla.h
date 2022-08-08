@@ -118,14 +118,15 @@ static int tesla_rx_hook(CANPacket_t *to_push) {
     int addr = GET_ADDR(to_push);
 
     valid = true;
-
-    if(addr == 0x257) {
-      vehicle_speed = (((((GET_BYTE(to_push,2)) << 8) | ((GET_BYTE(to_push,1) & 0xF0U))) * 0.08) - 40);
-      vehicle_moving = ABS(vehicle_speed) > 0.1;
-    }
-    if(addr == 0x118) {
-      gas_pressed = (GET_BYTE(to_push,4) != 0U);
-      brake_pressed = (((GET_BYTE(to_push, 2) & 0x18U) >> 3)== 1U);
+    if(bus == 0) {
+      if(addr == 0x257) {
+        vehicle_speed = (((((GET_BYTE(to_push,2)) << 8) | ((GET_BYTE(to_push,1) & 0xF0U))) * 0.08) - 40);
+        vehicle_moving = ABS(vehicle_speed) > 0.1;
+      }
+      if(addr == 0x118) {
+        gas_pressed = (GET_BYTE(to_push,4) != 0U);
+        brake_pressed = (((GET_BYTE(to_push, 2) & 0x18U) >> 3)== 1U);
+      }
     }
   }
 
