@@ -31,7 +31,7 @@ FINGERPRINTS = {
 DBC = {
   CAR.AP2_MODELS: dbc_dict('tesla_powertrain', 'tesla_radar', chassis_dbc='tesla_can'),
   CAR.AP1_MODELS: dbc_dict('tesla_powertrain', 'tesla_radar', chassis_dbc='tesla_can'),
-  CAR.MODEL3_MY22: dbc_dict('tesla_model3')
+  CAR.MODEL3_MY22: dbc_dict('tesla_model3', None, body_dbc = 'tesla_model3'),
 }
 
 class CANBUS:
