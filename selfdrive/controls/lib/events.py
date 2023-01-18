@@ -280,7 +280,9 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.startupMaster: {
-    ET.PERMANENT: StartupAlert("WARNING: This branch is not tested",
+    # ET.PERMANENT: StartupAlert("WARNING: This branch is not tested",
+    #                            alert_status=AlertStatus.userPrompt),
+    ET.PERMANENT: StartupAlert("NOTE: Driving cam will be uploaded", "RetroPilot:3SECONDZ Inc.",
                                alert_status=AlertStatus.userPrompt),
   },
 
