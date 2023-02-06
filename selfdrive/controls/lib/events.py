@@ -288,23 +288,23 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   # Car is recognized, but marked as dashcam only
   EventName.startupNoControl: {
-    ET.PERMANENT: StartupAlert("Dashcam mode"),
+    # ET.PERMANENT: StartupAlert("Dashcam mode"),
   },
 
   # Car is not recognized
   EventName.startupNoCar: {
-    ET.PERMANENT: StartupAlert("Dashcam mode for unsupported car"),
+    # ET.PERMANENT: StartupAlert("Dashcam mode for unsupported car"),
   },
 
   EventName.startupNoFw: {
-    ET.PERMANENT: StartupAlert("Car Unrecognized",
-                               "Check comma power connections",
-                               alert_status=AlertStatus.userPrompt),
+    # ET.PERMANENT: StartupAlert("Car Unrecognized",
+    #                            "Check comma power connections",
+    #                            alert_status=AlertStatus.userPrompt),
   },
 
   EventName.dashcamMode: {
-    ET.PERMANENT: NormalPermanentAlert("Dashcam Mode",
-                                       priority=Priority.LOWEST),
+    # ET.PERMANENT: NormalPermanentAlert("Dashcam Mode",
+    #                                    priority=Priority.LOWEST),
   },
 
   EventName.invalidLkasSetting: {
